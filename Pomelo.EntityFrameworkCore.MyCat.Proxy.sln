@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CFA158E8-0DC8-45D9-A442-71683B489D10}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9F2B1785-D2E4-47C8-83E3-B3187FE6920D}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Pomelo.EntityFrameworkCore.MyCat.Proxy", "src\Pomelo.EntityFrameworkCore.MyCat.Proxy\Pomelo.EntityFrameworkCore.MyCat.Proxy.xproj", "{16847326-2237-4DD6-B2B8-FB239F0EFCD1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16847326-2237-4DD6-B2B8-FB239F0EFCD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16847326-2237-4DD6-B2B8-FB239F0EFCD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16847326-2237-4DD6-B2B8-FB239F0EFCD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16847326-2237-4DD6-B2B8-FB239F0EFCD1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{16847326-2237-4DD6-B2B8-FB239F0EFCD1} = {CFA158E8-0DC8-45D9-A442-71683B489D10}
+	EndGlobalSection
+EndGlobal
