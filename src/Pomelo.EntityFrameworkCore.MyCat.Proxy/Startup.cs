@@ -110,52 +110,57 @@ namespace Pomelo.EntityFrameworkCore.MyCat.Proxy
 
         public void GenerateRuleXml(List<MyCatTable> Schema, List<MyCatDataNode> DataNodes, string database, bool IsUnder16)
         {
-            string ruleXml;
-            string funcXml;
-            if (IsUnder16)
+            foreach(var s in Schema)
             {
-                ruleXml = $@"
-	<tableRule name=""{ database }_rule"">
+                if (s.Keys.Count() != 1)
+                    continue;
+                string ruleXml;
+                string funcXml;
+                if (IsUnder16)
+                {
+                    ruleXml = $@"
+	<tableRule name=""{ database }_{ s.TableName }_rule"">
 		<rule>
-			<columns>{ string.Join(",", Schema.SelectMany(x => x.Keys).ToList()) }</columns>
-			<algorithm>{ database }_func</algorithm>
+			<columns>{ string.Join(",", s.Keys.First()) }</columns>
+			<algorithm>{ database }_{ s.TableName }_func</algorithm>
 		</rule>
 	</tableRule>
 ";
-    funcXml = $@"
-	<function name=""{ database }_func"" class=""org.opencloudb.route.function.PartitionByMod"">
-		<property name=""count"">{ DataNodes.Count }</property>
+                    funcXml = $@"
+	<function name=""{ database }_{ s.TableName }_func"" class=""org.opencloudb.route.function.PartitionByMod"">
+		<property name=""count"">{ s.DataNodes.Count() }</property>
 	</function>
 ";
-            }
-            else // 1.6+
-            {
-                ruleXml = $@"
-	<tableRule name=""{ database }_rule"">
+                }
+                else // 1.6+
+                {
+                    ruleXml = $@"
+	<tableRule name=""{ database }_{ s.TableName }_rule"">
 		<rule>
-			<columns>{ string.Join(",", Schema.SelectMany(x => x.Keys).ToList()) }</columns>
-			<algorithm>{ database }_func</algorithm>
+			<columns>{ string.Join(",", s.Keys.First()) }</columns>
+			<algorithm>{ database }_{ s.TableName }_func</algorithm>
 		</rule>
 	</tableRule>
 ";
-                funcXml = $@"
-	<function name=""{ database }_func"" class=""io.mycat.route.function.PartitionByMod"">
-		<property name=""count"">{ DataNodes.Count }</property>
+                    funcXml = $@"
+	<function name=""{ database }_{ s.TableName }_func"" class=""io.mycat.route.function.PartitionByMod"">
+		<property name=""count"">{ s.DataNodes.Count()}</property>
 	</function>
 ";
-            }
+                }
 
-            using (var reader = XmlReader.Create(Path.Combine(MyCatRoot, "conf", "rule.xml"), new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore }))
-            {
-                var xml = new XmlDocument();
-                xml.Load(reader);
-                var mycatRule = xml.ChildNodes.Cast<XmlNode>().Single(x => x.Name == "mycat:rule");
-                foreach (var x in mycatRule.ChildNodes.Cast<XmlNode>().Where(x => (x.Name == "tableRule" && x.Attributes["name"].Value == $"{ database }_rule") || (x.Name == "function" && x.Attributes["name"].Value == $"{ database }_func")).ToList())
-                    mycatRule.RemoveChild(x);
-                mycatRule.InnerXml = ruleXml + mycatRule.InnerXml;
-                mycatRule.InnerXml += funcXml;
-                reader.Dispose();
-                File.WriteAllText(Path.Combine(MyCatRoot, "conf", "rule.xml"), PatchXml("rule", xml.OuterXml));
+                using (var reader = XmlReader.Create(Path.Combine(MyCatRoot, "conf", "rule.xml"), new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore }))
+                {
+                    var xml = new XmlDocument();
+                    xml.Load(reader);
+                    var mycatRule = xml.ChildNodes.Cast<XmlNode>().Single(x => x.Name == "mycat:rule");
+                    foreach (var x in mycatRule.ChildNodes.Cast<XmlNode>().Where(x => (x.Name == "tableRule" && x.Attributes["name"].Value == $"{ database }_{ s.TableName }_rule") || (x.Name == "function" && x.Attributes["name"].Value == $"{ database }_{ s.TableName }_func")).ToList())
+                        mycatRule.RemoveChild(x);
+                    mycatRule.InnerXml = ruleXml + mycatRule.InnerXml;
+                    mycatRule.InnerXml += funcXml;
+                    reader.Dispose();
+                    File.WriteAllText(Path.Combine(MyCatRoot, "conf", "rule.xml"), PatchXml("rule", xml.OuterXml));
+                }
             }
         }
 
@@ -166,7 +171,7 @@ namespace Pomelo.EntityFrameworkCore.MyCat.Proxy
             foreach (var t in Schema)
             {
                 if (t.Keys.Count() == 1)
-                    SchemaBuilder.AppendLine($"        <table name=\"{ t.TableName }\" primaryKey=\"{ t.Keys.First() }\" dataNode=\"{ string.Join(",", t.DataNodes.Select(x => database + "_" + x)) }\" rule=\"{ database }_rule\" { (t.IsAutoIncrement ? "autoIncrement=\"true\"" : "") } />");
+                    SchemaBuilder.AppendLine($"        <table name=\"{ t.TableName }\" primaryKey=\"{ t.Keys.First() }\" dataNode=\"{ string.Join(",", t.DataNodes.Select(x => database + "_" + x)) }\" rule=\"{ database }_{ t.TableName }_rule\" { (t.IsAutoIncrement ? "autoIncrement=\"true\"" : "") } />");
                 else
                     SchemaBuilder.AppendLine($"        <table name=\"{ t.TableName }\" primaryKey=\"{ string.Join(",", t.Keys) }\" dataNode=\"{ database }_dn0\" { (t.IsAutoIncrement ? "autoIncrement=\"true\"" : "") } />");
             }
