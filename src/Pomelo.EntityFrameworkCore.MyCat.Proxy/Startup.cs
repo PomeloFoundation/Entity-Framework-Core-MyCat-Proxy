@@ -114,19 +114,19 @@ namespace Pomelo.EntityFrameworkCore.MyCat.Proxy
             {
                 if (s.Keys.Count() != 1)
                     continue;
-                string ruleXml;
-                string funcXml;
+                string ruleXml="";
+                string funcXml="";
                 if (IsUnder16)
                 {
-                    ruleXml = $@"
+                    ruleXml += $@"
 	<tableRule name=""{ database }_{ s.TableName }_rule"">
 		<rule>
-			<columns>{ string.Join(",", s.Keys.First()) }</columns>
+			<columns>{ s.Keys.First() }</columns>
 			<algorithm>{ database }_{ s.TableName }_func</algorithm>
 		</rule>
 	</tableRule>
 ";
-                    funcXml = $@"
+                    funcXml += $@"
 	<function name=""{ database }_{ s.TableName }_func"" class=""org.opencloudb.route.function.PartitionByMod"">
 		<property name=""count"">{ s.DataNodes.Count() }</property>
 	</function>
@@ -134,15 +134,15 @@ namespace Pomelo.EntityFrameworkCore.MyCat.Proxy
                 }
                 else // 1.6+
                 {
-                    ruleXml = $@"
+                    ruleXml += $@"
 	<tableRule name=""{ database }_{ s.TableName }_rule"">
 		<rule>
-			<columns>{ string.Join(",", s.Keys.First()) }</columns>
+			<columns>{s.Keys.First() }</columns>
 			<algorithm>{ database }_{ s.TableName }_func</algorithm>
 		</rule>
 	</tableRule>
 ";
-                    funcXml = $@"
+                    funcXml += $@"
 	<function name=""{ database }_{ s.TableName }_func"" class=""io.mycat.route.function.PartitionByMod"">
 		<property name=""count"">{ s.DataNodes.Count()}</property>
 	</function>
