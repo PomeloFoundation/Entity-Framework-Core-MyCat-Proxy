@@ -167,7 +167,7 @@ namespace Pomelo.EntityFrameworkCore.MyCat.Proxy
         public void GenerateSchemaXml(List<MyCatTable>Schema, List<MyCatDataNode> DataNodes, string database)
         {
             var SchemaBuilder = new StringBuilder();
-            SchemaBuilder.AppendLine($"\r\n    <schema name=\"{ database }\" checkSQLschema=\"false\" sqlMaxLimit=\"100\">");
+            SchemaBuilder.AppendLine($"\r\n    <schema name=\"{ database }\" checkSQLschema=\"false\">");
             foreach (var t in Schema)
             {
                 if (t.Keys.Count() == 1)
